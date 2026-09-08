@@ -55,7 +55,22 @@ app.get('/', (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 
+function logStartupConfig() {
+  const dbConfigured = Boolean(
+    process.env.DATABASE_URL ||
+    (process.env.DB_HOST && process.env.DB_NAME && process.env.DB_USER)
+  );
+
+  console.log('Startup configuration:');
+  console.log(`  PORT=${PORT}`);
+  console.log(`  database configured=${dbConfigured}`);
+  console.log(`  JWT_SECRET set=${Boolean(process.env.JWT_SECRET)}`);
+  console.log(`  SMS_DISABLED=${process.env.SMS_DISABLED || 'false'}`);
+  console.log(`  CORS_ORIGIN=${process.env.CORS_ORIGIN ? 'set' : 'default localhost:3000'}`);
+}
+
 if (require.main === module) {
+  logStartupConfig();
   app.listen(PORT, '0.0.0.0', () => {
     console.log('================================');
     console.log('e-Kitambulisho Server Started!');
