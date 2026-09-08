@@ -1,11 +1,17 @@
 require('dotenv').config();
 
-const AfricasTalking = require('africastalking')({
-  apiKey: process.env.AT_API_KEY,
-  username: process.env.AT_USERNAME
-});
+let smsClient = null;
 
-const sms = AfricasTalking.SMS;
+function getSmsClient() {
+  if (!smsClient) {
+    const AfricasTalking = require('africastalking')({
+      apiKey: process.env.AT_API_KEY,
+      username: process.env.AT_USERNAME
+    });
+    smsClient = AfricasTalking.SMS;
+  }
+  return smsClient;
+}
 
 // Convert 07... to +254...
 function formatPhone(phone) {
@@ -38,7 +44,7 @@ async function sendSMS(phoneNumber, message) {
       return { success: true, skipped: true };
     }
 
-    const result = await sms.send({
+    const result = await getSmsClient().send({
       to: [formattedPhone],
       message: message
     });
